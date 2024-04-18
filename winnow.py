@@ -57,6 +57,7 @@ def winnow(points, n, T, eta, rho, alpha=0.0):
             # choose a random index given w_vec as the probability distribution
             w_chosen_index = np.random.choice(n, 1, p=u_normalized)
 
+            # FIXME: weights do not maintain sum of 1...
             # then update the chosen expert
             w_vec[w_chosen_index] = r1 * u_vec[w_chosen_index] / U
             ########################################
