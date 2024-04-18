@@ -139,20 +139,6 @@ def main():
         "class=-1"
     points_dict[black_color]["label"] = \
         "class=1"
-    
-    # colors = ["none" if label < 0 else "black"
-    #           for label in points[:, 2]]
-    # labels = ["class=-1" if label < 0 else "class=1"
-    #           for label in points[:, 2]]
-    # 
-    # none_colors = [color for color in colors if color == "none"]
-    # black_colors = [color for color in colors if color == "black"]
-    # 
-    # none_labels = [label for label in labels if label == "class=-1"]
-    # black_labels = [label for label in labels if label == "class=1"]
-    # 
-    # ax.scatter(xs, ys, s=80, facecolors=colors, edgecolors="black",
-    #                      label=labels)
 
     for color in [none_color, black_color]:
         ax.scatter(points_dict[color]["points"]["x"],
