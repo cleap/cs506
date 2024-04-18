@@ -18,7 +18,7 @@ def winnow(points, n, T, eta, rho, epsilon, alpha=0.0):
     l_vec = np.zeros((n,))
     u_vec = np.ones((n,))
     w_vec = np.ones((n,))
-    
+
     t_total = 0
 
     for t in range(T):
@@ -59,6 +59,8 @@ def winnow(points, n, T, eta, rho, epsilon, alpha=0.0):
 
     print(f"total steps t: {t_total}")
     print(f"w = {w_vec}")
+    classification_checks = points @ w_vec
+    print(f"classification_checks = {classification_checks}")
 
 
 def winnow_lm(points, n, T, eta, rho, epsilon):
@@ -85,7 +87,7 @@ def main():
     rho = 1
     epsilon = 0.05
     eta = epsilon / (2 * rho)
-    
+
     # print parameters 
     print(f"n = {n}")
     print(f"rho = {rho}")
@@ -107,16 +109,63 @@ def main():
     print()
     print("Normal Winnow:")
     winnow(new_points, n, T, eta, rho, epsilon)
-    
+
     print()
-    print("Winnow with margin epsilon/2:")
+    print(f"Winnow with margin epsilon/2={epsilon / 2}:")
     winnow_lm(new_points, n, T, eta, rho, epsilon)
 
     fig, ax = plt.subplots()
     xs = points[:, 0]
     ys = points[:, 1]
-    colors = ["none" if label < 0 else "black" for label in points[:, 2]]
-    ax.scatter(xs, ys, s=80, facecolors=colors, edgecolors="black")
+    marks = points[:, 2]
+    
+    none_color = "none"
+    black_color = "black"
+    
+    points_dict = dict()
+    points_dict[none_color] = {}
+    points_dict[black_color] = {}
+    points_dict[none_color]["points"] = {}
+    points_dict[black_color]["points"] = {}
+    points_dict[none_color]["points"]["x"] = \
+        [x for (x, mark) in zip(xs, marks) if mark < 0]
+    points_dict[none_color]["points"]["y"] = \
+        [y for (y, mark) in zip(ys, marks) if mark < 0]
+    points_dict[black_color]["points"]["x"] = \
+        [x for (x, mark) in zip(xs, marks) if mark > 0]
+    points_dict[black_color]["points"]["y"] = \
+        [y for (y, mark) in zip(ys, marks) if mark > 0]
+    points_dict[none_color]["label"] = \
+        "class=-1"
+    points_dict[black_color]["label"] = \
+        "class=1"
+    
+    # colors = ["none" if label < 0 else "black"
+    #           for label in points[:, 2]]
+    # labels = ["class=-1" if label < 0 else "class=1"
+    #           for label in points[:, 2]]
+    # 
+    # none_colors = [color for color in colors if color == "none"]
+    # black_colors = [color for color in colors if color == "black"]
+    # 
+    # none_labels = [label for label in labels if label == "class=-1"]
+    # black_labels = [label for label in labels if label == "class=1"]
+    # 
+    # ax.scatter(xs, ys, s=80, facecolors=colors, edgecolors="black",
+    #                      label=labels)
+
+    for color in [none_color, black_color]:
+        ax.scatter(points_dict[color]["points"]["x"],
+                   points_dict[color]["points"]["y"], 
+                   s=80, 
+                   facecolors=color, 
+                   edgecolors="black",
+                   label=points_dict[color]["label"])
+
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.title("Plot of Points")
+    plt.legend()
 
     plt.show()
 
